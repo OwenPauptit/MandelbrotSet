@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <canvas id="canvas" width="500" height="500"></canvas>
+        <br/>
+        <input type="number" id="min" value="-1.5"/>
+        <input type="number" id="max" value="1.5"/>
+        <button onclick="refresh()">Refresh</button>
+        <script>
+
+            var maxiterations = 100;
+            var min = -0.5;
+            var max = -0.53;
+            window.onload = function()
+            {
+                canvas = document.getElementById("canvas");
+                ctx = canvas.getContext("2d");
+                refresh();
+            }
+
+            refresh = function()
+            {
+                min = parseFloat(document.getElementById("min").value);
+                max = parseFloat(document.getElementById("max").value);
+                draw();
+            }
+
+            draw = function()
+            {
+                for (var i = 0; i < canvas.width; i+=1)
+                {
+                    for (var j = 0; j < canvas.height; j+=1)
+                    {
+                        var a = (i / canvas.width) * (max - min) + min;
+                        var b = (j / canvas.height) * (max - min) + min;
+
+                        var za = a;
+                        var zb = b;
+                        var n = 0;
+
+                        while (n < maxiterations)
+                        {
+                            var aa = za * za - zb * zb;
+                            var bb = 2 * za * zb ;
+                            za = aa + a;
+                            zb = bb + b;
+                            if (za + zb > 16)
+                            {
+                                break;
+                            }
+                            
+                            n++;
+                        }
+                        var bright = Math.round(Math.sqrt(n / maxiterations) * 255);
+                        if (n == maxiterations)
+                        {
+                            bright = 0;
+                        }
+                        
+                        ctx.fillStyle = toHex(bright,bright,bright);
+                        ctx.fillRect(i,j,1,1);
+
+                    }
+                }
+            }
+
+            toHex = function(r,g,b,a=255)
+            {
+                var hex = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"];
+                var r1 = hex[Math.floor(r/16)] + hex[r % 16];
+                var g1 = hex[Math.floor(g/16)] + hex[g % 16];
+                var b1 = hex[Math.floor(b/16)] + hex[b % 16];
+                var a1 = hex[Math.floor(a/16)] + hex[a % 16];
+                return "#" + r1 + g1 + b1 + a1
+            }
+        </script>
+    </body>
+</html>
